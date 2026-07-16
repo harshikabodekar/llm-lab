@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import StartHere from "../StartHere";
+import WhatWhyHow from "../WhatWhyHow";
 
 /* a real (tiny) transformer block: attention -> add & norm -> feedforward ->
    add & norm. deterministic seeded weights (no Math.random at render time,
@@ -62,19 +63,20 @@ function runBlock(x, params) {
   y = addMat(y, ffOut).map(layerNorm);
   return y;
 }
-function runStack(nBlocks) {
+function runStack(nBlocks, useResidualNorm) {
   const states = [INPUT];
   let x = INPUT;
   for (let i = 0; i < nBlocks; i++) {
-    x = runBlock(x, BLOCK_PARAMS[i]);
+    x = useResidualNorm ? runBlock(x, BLOCK_PARAMS[i]) : runBlockRaw(x, BLOCK_PARAMS[i]);
     states.push(x);
   }
   return states;
 }
 
 function MatrixHeatmap({ matrix }) {
+  const cols = matrix[0].length;
   return (
-    <div className="inline-grid gap-[2px] bg-ink/10 p-[2px]" style={{ gridTemplateColumns: `repeat(${DIM}, 1fr)` }}>
+    <div className="inline-grid gap-[2px] bg-ink/10 p-[2px]" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
       {matrix.flatMap((row, i) =>
         row.map((v, j) => {
           const clamped = Math.max(-2, Math.min(2, v)) / 2;
@@ -82,6 +84,99 @@ function MatrixHeatmap({ matrix }) {
           return <div key={`${i}-${j}`} className="h-5 w-5 bg-paper" style={{ background: color }} title={v.toFixed(2)} />;
         })
       )}
+    </div>
+  );
+}
+
+function cosineSim(matA, matB) {
+  const af = matA.flat();
+  const bf = matB.flat();
+  const dp = af.reduce((s, v, i) => s + v * bf[i], 0);
+  const na = Math.sqrt(af.reduce((s, v) => s + v * v, 0));
+  const nb = Math.sqrt(bf.reduce((s, v) => s + v * v, 0));
+  return na && nb ? dp / (na * nb) : 0;
+}
+
+function runBlockRaw(x, params) {
+  // no residual, no norm — each step REPLACES the state instead of adding to it
+  const attnOut = attention(x);
+  return attnOut.map((vec) => feedForward(vec, params));
+}
+
+// ---- positional encoding demo ----
+const PE_DIM = 4;
+const PE_WORDS = {
+  dog: [0.8, 0.2, 0.1, 0.3],
+  bites: [0.1, 0.9, 0.2, 0.1],
+  man: [0.3, 0.1, 0.7, 0.2]
+};
+const SENTENCE_A = ["dog", "bites", "man"];
+const SENTENCE_B = ["man", "bites", "dog"];
+
+function positionalEncoding(pos, dim) {
+  const pe = [];
+  for (let i = 0; i < dim; i++) {
+    const angle = pos / Math.pow(10000, (2 * Math.floor(i / 2)) / dim);
+    pe.push(i % 2 === 0 ? Math.sin(angle) : Math.cos(angle));
+  }
+  return pe;
+}
+function addVec(a, b) {
+  return a.map((v, i) => v + b[i]);
+}
+
+function PositionalEncodingDemo() {
+  const [sentence, setSentence] = useState("A");
+  const [showPE, setShowPE] = useState(true);
+
+  const words = sentence === "A" ? SENTENCE_A : SENTENCE_B;
+  const embeddings = words.map((w) => PE_WORDS[w]);
+  const display = showPE ? embeddings.map((e, i) => addVec(e, positionalEncoding(i, PE_DIM))) : embeddings;
+
+  return (
+    <div className="mb-8">
+      <p className="margin-note mb-3 uppercase tracking-wide">step 0 · positional encoding</p>
+      <WhatWhyHow
+        what="add real position vectors to token embeddings, then compare 'dog bites man' vs 'man bites dog'."
+        why="attention treats tokens as an unordered set — position vectors are the only thing telling the model where each word actually sits."
+        how="toggle positional encoding on/off and watch whether 'dog' looks different depending on where it sits."
+      />
+      <div className="mb-3 flex flex-wrap gap-2">
+        <button
+          onClick={() => setSentence("A")}
+          className={`px-3 py-1.5 font-mono text-xs ${sentence === "A" ? "btn-ink" : "btn-paper"}`}
+        >
+          "dog bites man"
+        </button>
+        <button
+          onClick={() => setSentence("B")}
+          className={`px-3 py-1.5 font-mono text-xs ${sentence === "B" ? "btn-ink" : "btn-paper"}`}
+        >
+          "man bites dog"
+        </button>
+        <span className="mx-1 text-faded">·</span>
+        <button
+          onClick={() => setShowPE((v) => !v)}
+          className={`px-3 py-1.5 font-mono text-xs ${showPE ? "border-[1.5px] border-ink bg-marker" : "btn-paper"}`}
+        >
+          {showPE ? "with positional encoding" : "without positional encoding"}
+        </button>
+      </div>
+      <div className="flex flex-wrap gap-4">
+        {words.map((w, i) => (
+          <div key={i} className="sheet-flat bg-white p-2 text-center">
+            <p className={`mb-1 font-mono text-xs ${w === "dog" ? "font-bold text-inkblue" : "text-faded"}`}>
+              {w} (pos {i})
+            </p>
+            <MatrixHeatmap matrix={[display[i]]} />
+          </div>
+        ))}
+      </div>
+      <p className="margin-note mt-4">
+        {showPE
+          ? "watch 'dog's card — its colors change depending on which position it lands in, because position 0 and position 2 get added different position vectors."
+          : "without positional encoding, 'dog's card is IDENTICAL in both sentences — the model has no way to tell where anything sits."}
+      </p>
     </div>
   );
 }
@@ -157,17 +252,26 @@ function OrderExercise() {
 export default function Ch6Playground() {
   const [nBlocks, setNBlocks] = useState(2);
   const [step, setStep] = useState(0);
+  const [useResidualNorm, setUseResidualNorm] = useState(true);
 
-  const states = useMemo(() => runStack(nBlocks), [nBlocks]);
+  const states = useMemo(() => runStack(nBlocks, useResidualNorm), [nBlocks, useResidualNorm]);
   const clampedStep = Math.min(step, nBlocks);
+  const signalRetained = cosineSim(INPUT, states[clampedStep]);
 
   return (
     <div className="sheet p-5">
       <StartHere>order the 4 steps, then step through the block stack below.</StartHere>
 
+      <PositionalEncodingDemo />
+
       <OrderExercise />
 
       <p className="margin-note mb-3 uppercase tracking-wide">step 2 · stack blocks, watch shapes flow</p>
+      <WhatWhyHow
+        what="stack real transformer blocks and step through them, with residual+norm on or off."
+        why="residual connections are the plumbing that stops deep nets from dying — turn them off and watch the original signal disappear."
+        how="pick a block count, toggle residual+norm, then click through each step and watch 'signal retained' below."
+      />
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <span className="font-mono text-xs text-faded">blocks:</span>
@@ -183,6 +287,20 @@ export default function Ch6Playground() {
             {n}
           </button>
         ))}
+        <span className="mx-1 text-faded">·</span>
+        <span className="font-mono text-xs text-faded">residual + norm:</span>
+        <button
+          onClick={() => setUseResidualNorm(true)}
+          className={`px-3 py-1.5 font-mono text-xs ${useResidualNorm ? "btn-ink" : "btn-paper"}`}
+        >
+          on
+        </button>
+        <button
+          onClick={() => setUseResidualNorm(false)}
+          className={`px-3 py-1.5 font-mono text-xs ${!useResidualNorm ? "btn-ink" : "btn-paper"}`}
+        >
+          off
+        </button>
       </div>
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
@@ -201,10 +319,14 @@ export default function Ch6Playground() {
       <div className="sheet-flat inline-block bg-white p-4">
         <MatrixHeatmap matrix={states[clampedStep]} />
         <p className="mt-3 font-mono text-xs text-faded">shape: {N_TOKENS} tokens × {DIM} dims</p>
+        <p className={`mt-1 font-mono text-xs ${signalRetained > 0.5 ? "text-signal" : "text-alarm"}`}>
+          signal retained (similarity to original input): {(signalRetained * 100).toFixed(0)}%
+        </p>
       </div>
 
       <p className="margin-note mt-4">
-        same shape at every step ({N_TOKENS} × {DIM}) — only the values (and the cell colors above) change as data passes through each block.
+        same shape at every step ({N_TOKENS} × {DIM}) regardless of the toggle — only "signal retained" and the cell
+        colors tell you whether the original input is still in there. {!useResidualNorm && "watch it collapse faster with residual+norm off."}
       </p>
     </div>
   );
