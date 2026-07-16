@@ -20,7 +20,9 @@ export default function Ch0Playground() {
       <div>
         <CellLabel>1 · variables</CellLabel>
         <CodeCell
-          goal="a variable that stores your name and age"
+          what="store your name and age in labeled variables."
+          why="every program — including every model in this app — starts by holding values in named variables."
+          how="fill the blanks, press run, read the output."
           prompt="fill in your name and age, then hit run."
           layers={{
             blank: {
@@ -35,7 +37,9 @@ export default function Ch0Playground() {
       <div>
         <CellLabel>2 · lists</CellLabel>
         <CodeCell
-          goal="code that reads items out of a list"
+          what="read items out of a list by their index."
+          why="tokens, weights, embeddings — nearly everything in an LLM lives in lists you index into."
+          how="drag the 4 lines into the right order, press run."
           prompt="these 4 lines got scrambled — drag them into an order that makes sense, then run."
           layers={{
             parsons: {
@@ -54,7 +58,9 @@ export default function Ch0Playground() {
       <div>
         <CellLabel>3 · functions</CellLabel>
         <CodeCell
-          goal="a function that greets someone by name"
+          what="write a function that returns a greeting."
+          why="every layer of a neural net is just a function — write one now, ch4 onward is just bigger versions of this."
+          how="fill in the return line, press run — stuck? tap 'need a hint?'"
           prompt="finish the greet function so it returns 'hi ' plus the name. stuck? there's a hint button."
           layers={{
             hints: {
@@ -73,7 +79,9 @@ export default function Ch0Playground() {
       <div>
         <CellLabel>4 · loops</CellLabel>
         <CodeCell
-          goal="a loop that prints 1 through 5"
+          what="print the numbers 1 through 5 with a loop."
+          why="training a model IS a loop — predict, check, adjust, repeat. this is that loop, shrunk down."
+          how="write a for loop from scratch, press run."
           prompt="freehand this one — write a loop that prints the numbers 1 through 5, one per line."
           layers={{
             freehand: {

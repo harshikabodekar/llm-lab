@@ -7,6 +7,7 @@ import Ch1Playground from "./playgrounds/Ch1Playground";
 import Ch2Playground from "./playgrounds/Ch2Playground";
 import Ch3Playground from "./playgrounds/Ch3Playground";
 import Checkpoint from "./Checkpoint";
+import WhatWhyHow from "./WhatWhyHow";
 import { CH0_CONTENT } from "../lib/content/ch0";
 import { CH1_CONTENT } from "../lib/content/ch1";
 import { CH2_CONTENT } from "../lib/content/ch2";
@@ -97,6 +98,7 @@ export default function ChapterShell({ chapter }) {
           {/* 3 · playground */}
           <section className="mt-12">
             <SectionLabel>playground — your hands now</SectionLabel>
+            {entry.content.intro && <WhatWhyHow {...entry.content.intro} />}
             <entry.Playground />
           </section>
 

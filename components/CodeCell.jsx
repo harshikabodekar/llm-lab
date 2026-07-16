@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { runPython } from "../lib/pyodide";
+import WhatWhyHow from "./WhatWhyHow";
 
 /* the code cell — every python exercise in the app runs through this.
    4 difficulty layers, pick whichever you supply data for:
@@ -33,7 +34,7 @@ function shuffledOnce(arr) {
   return a;
 }
 
-export default function CodeCell({ prompt, layers, defaultLayer, check, goal }) {
+export default function CodeCell({ prompt, layers, defaultLayer, check, what, why, how }) {
   const available = useMemo(
     () => LAYER_ORDER.filter((k) => layers?.[k]),
     [layers]
@@ -129,11 +130,7 @@ export default function CodeCell({ prompt, layers, defaultLayer, check, goal }) 
 
   return (
     <div className="sheet p-5">
-      {goal && (
-        <p className="mb-2 font-mono text-xs text-faded">
-          you're building: <span className="text-ink">{goal}</span>
-        </p>
-      )}
+      {(what || why || how) && <WhatWhyHow what={what} why={why} how={how} />}
       {prompt && <p className="margin-note mb-4">{prompt}</p>}
 
       {available.length > 1 && (

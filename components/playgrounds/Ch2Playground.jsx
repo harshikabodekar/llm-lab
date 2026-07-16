@@ -15,7 +15,9 @@ export default function Ch2Playground() {
       <div>
         <CellLabel>warm up · the dumb way</CellLabel>
         <CodeCell
-          goal="a one-line word splitter"
+          what="split a sentence into words using .split()."
+          why="this is the laziest possible tokenizer — you need to feel its limits before building a real one."
+          how="fill in the method name, press run."
           prompt="fill in the method that splits a string on spaces, then run."
           layers={{
             blank: {
@@ -30,7 +32,9 @@ export default function Ch2Playground() {
       <div>
         <CellLabel>now write a real one</CellLabel>
         <CodeCell
-          goal="a real greedy tokenizer function"
+          what="write a greedy longest-match tokenizer function."
+          why="this exact logic — minus the training — is what turns your messages into tokens before any model sees them."
+          how="finish tokenize(), press run — stuck? tap 'need a hint?' up to 3 times for the full answer."
           prompt="finish tokenize() — greedily match the longest chunk in VOCAB that the remaining text starts with. no match? peel off one character as its own token. stuck? there's a hint button."
           layers={{
             hints: {
