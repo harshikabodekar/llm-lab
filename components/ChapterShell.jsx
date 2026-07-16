@@ -9,6 +9,7 @@ import Ch3Playground from "./playgrounds/Ch3Playground";
 import Ch4Playground from "./playgrounds/Ch4Playground";
 import Ch5Playground from "./playgrounds/Ch5Playground";
 import Ch6Playground from "./playgrounds/Ch6Playground";
+import Ch7Playground from "./playgrounds/Ch7Playground";
 import Checkpoint from "./Checkpoint";
 import WhatWhyHow from "./WhatWhyHow";
 import { CH0_CONTENT } from "../lib/content/ch0";
@@ -18,6 +19,7 @@ import { CH3_CONTENT } from "../lib/content/ch3";
 import { CH4_CONTENT } from "../lib/content/ch4";
 import { CH5_CONTENT } from "../lib/content/ch5";
 import { CH6_CONTENT } from "../lib/content/ch6";
+import { CH7_CONTENT } from "../lib/content/ch7";
 
 // registry: each chapter plugs its playground + content in here.
 // on days 2-5 we add one entry per chapter — the shell never changes.
@@ -28,7 +30,8 @@ const REGISTRY = {
   ch3: { Playground: Ch3Playground, content: CH3_CONTENT },
   ch4: { Playground: Ch4Playground, content: CH4_CONTENT },
   ch5: { Playground: Ch5Playground, content: CH5_CONTENT },
-  ch6: { Playground: Ch6Playground, content: CH6_CONTENT }
+  ch6: { Playground: Ch6Playground, content: CH6_CONTENT },
+  ch7: { Playground: Ch7Playground, content: CH7_CONTENT }
 };
 
 function SectionLabel({ children }) {
