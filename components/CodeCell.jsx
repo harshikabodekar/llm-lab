@@ -34,7 +34,7 @@ function shuffledOnce(arr) {
   return a;
 }
 
-export default function CodeCell({ prompt, layers, defaultLayer, check, what, why, how }) {
+export default function CodeCell({ prompt, layers, defaultLayer, check, what, why, how, onPass }) {
   const available = useMemo(
     () => LAYER_ORDER.filter((k) => layers?.[k]),
     [layers]
@@ -98,6 +98,7 @@ export default function CodeCell({ prompt, layers, defaultLayer, check, what, wh
           : res.output.includes(check)
         : null;
     setResult({ ...res, passed });
+    if (passed) onPass?.();
     setRunning(false);
   }
 
