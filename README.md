@@ -32,6 +32,22 @@ open http://localhost:3000
   powers ch4/8/9
 - `lib/pyodide.js` — python-in-browser loader + beginner error translator,
   powers all the code cells
+- `components/WhatWhyHow.jsx` — LIVE: the what/why/how strip, standard on
+  every code cell and every playground
+- `components/playgrounds/Ch4Playground.jsx` — LIVE: drag-the-weights net
+  vs real gradient descent, side by side
+- `components/playgrounds/Ch5Playground.jsx` — LIVE: real dot-product
+  attention heatmap, click a word to see who it's listening to
+- `components/playgrounds/Ch6Playground.jsx` — LIVE: order the transformer
+  block, then step real vectors through a stack of them
+- `components/playgrounds/Ch7Playground.jsx` — LIVE: cross-entropy loss
+  slider demo + write-the-formula code cell
+- `components/playgrounds/Ch8Playground.jsx` — LIVE: ball on a real loss
+  landscape, learning rate slider, genuine divergence at high rates
+- `components/playgrounds/Ch9Playground.jsx` + `lib/charmodel.js` — LIVE:
+  the flagship — paste your text, a real tiny char-model trains live in
+  the browser, loss curve + evolving sample text + temperature slider,
+  gated behind two unlock code cells
 
 ## the 5-day sprint
 
