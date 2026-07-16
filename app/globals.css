@@ -1,0 +1,94 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---- the lab notebook ----
+   the whole app lives on graph paper. you're not watching a course,
+   you're working through an engineering notebook. */
+
+:root {
+  --paper: #fafaf7;
+  --grid: #e7e9e2;
+  --ink: #1a1d21;
+  --inkblue: #2b4fd8;
+  --marker: #ffd644;
+}
+
+body {
+  background-color: var(--paper);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 28px 28px;
+  color: var(--ink);
+  font-family: "Instrument Sans", sans-serif;
+}
+
+/* highlighter effect — like a marker swipe on paper */
+.hl {
+  background: linear-gradient(transparent 55%, var(--marker) 55%, var(--marker) 92%, transparent 92%);
+  padding: 0 2px;
+}
+
+/* margin note — the signature element. blue-ink annotations in the margins,
+   like a senior wrote hints in your notebook */
+.margin-note {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+  color: var(--inkblue);
+  border-left: 2px solid var(--inkblue);
+  padding-left: 0.6rem;
+  transform: rotate(-0.4deg);
+}
+
+/* paper card — sits on the grid like a taped-in sheet */
+.sheet {
+  background: #fff;
+  border: 1.5px solid var(--ink);
+  box-shadow: 4px 4px 0 0 var(--ink);
+}
+.sheet-flat {
+  background: #fff;
+  border: 1.5px solid var(--ink);
+}
+
+.btn-ink {
+  background: var(--ink);
+  color: var(--paper);
+  border: 1.5px solid var(--ink);
+  box-shadow: 3px 3px 0 0 rgba(26, 29, 33, 0.25);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.btn-ink:hover { transform: translate(1px, 1px); box-shadow: 2px 2px 0 0 rgba(26, 29, 33, 0.25); }
+.btn-ink:active { transform: translate(3px, 3px); box-shadow: none; }
+
+.btn-paper {
+  background: #fff;
+  border: 1.5px solid var(--ink);
+  transition: transform 0.08s ease;
+}
+.btn-paper:hover { transform: translate(0, -1px); }
+
+/* token chips in the tokenizer playground */
+.token-chip {
+  font-family: "IBM Plex Mono", monospace;
+  border: 1.5px solid var(--ink);
+  padding: 2px 7px;
+  font-size: 0.85rem;
+  animation: pop-in 0.18s ease both;
+}
+@keyframes pop-in {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .token-chip { animation: none; }
+  .btn-ink, .btn-paper { transition: none; }
+}
+
+:focus-visible {
+  outline: 2.5px solid var(--inkblue);
+  outline-offset: 2px;
+}
