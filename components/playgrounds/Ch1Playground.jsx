@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import StartHere from "../StartHere";
 
 /* a real (mini) tokenizer, not a fake demo.
    - char mode: every character = one token
@@ -65,6 +66,8 @@ export default function Ch1Playground() {
 
   return (
     <div className="sheet p-5">
+      <StartHere>type your name below and switch between the three modes.</StartHere>
+
       <label className="font-mono text-xs text-faded">
         type anything — english, hinglish, emojis, go wild
       </label>
