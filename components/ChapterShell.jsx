@@ -13,6 +13,7 @@ import Ch7Playground from "./playgrounds/Ch7Playground";
 import Ch8Playground from "./playgrounds/Ch8Playground";
 import Ch9Playground from "./playgrounds/Ch9Playground";
 import Boss1Playground from "./playgrounds/Boss1Playground";
+import Ch12Playground from "./playgrounds/Ch12Playground";
 import Checkpoint from "./Checkpoint";
 import WhatWhyHow from "./WhatWhyHow";
 import { CH0_CONTENT } from "../lib/content/ch0";
@@ -26,6 +27,7 @@ import { CH7_CONTENT } from "../lib/content/ch7";
 import { CH8_CONTENT } from "../lib/content/ch8";
 import { CH9_CONTENT } from "../lib/content/ch9";
 import { BOSS1_CONTENT } from "../lib/content/boss1";
+import { CH12_CONTENT } from "../lib/content/ch12";
 import { addCollected } from "../lib/recapDeck";
 
 // registry: each chapter plugs its playground + content in here.
@@ -41,7 +43,8 @@ const REGISTRY = {
   ch7: { Playground: Ch7Playground, content: CH7_CONTENT },
   ch8: { Playground: Ch8Playground, content: CH8_CONTENT },
   ch9: { Playground: Ch9Playground, content: CH9_CONTENT },
-  boss1: { Playground: Boss1Playground, content: BOSS1_CONTENT }
+  boss1: { Playground: Boss1Playground, content: BOSS1_CONTENT },
+  ch12: { Playground: Ch12Playground, content: CH12_CONTENT }
 };
 
 function SectionLabel({ children }) {
