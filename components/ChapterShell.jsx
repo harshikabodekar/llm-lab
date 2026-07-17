@@ -22,6 +22,11 @@ import Ch15Playground from "./playgrounds/Ch15Playground";
 import Ch16Playground from "./playgrounds/Ch16Playground";
 import Ch17Playground from "./playgrounds/Ch17Playground";
 import Ch18Playground from "./playgrounds/Ch18Playground";
+import Ch19Playground from "./playgrounds/Ch19Playground";
+import Ch20Playground from "./playgrounds/Ch20Playground";
+import Ch21Playground from "./playgrounds/Ch21Playground";
+import Ch22Playground from "./playgrounds/Ch22Playground";
+import Ch23Playground from "./playgrounds/Ch23Playground";
 import Checkpoint from "./Checkpoint";
 import WhatWhyHow from "./WhatWhyHow";
 import { CH0_CONTENT } from "../lib/content/ch0";
@@ -44,6 +49,11 @@ import { CH15_CONTENT } from "../lib/content/ch15";
 import { CH16_CONTENT } from "../lib/content/ch16";
 import { CH17_CONTENT } from "../lib/content/ch17";
 import { CH18_CONTENT } from "../lib/content/ch18";
+import { CH19_CONTENT } from "../lib/content/ch19";
+import { CH20_CONTENT } from "../lib/content/ch20";
+import { CH21_CONTENT } from "../lib/content/ch21";
+import { CH22_CONTENT } from "../lib/content/ch22";
+import { CH23_CONTENT } from "../lib/content/ch23";
 import { addCollected } from "../lib/recapDeck";
 
 // registry: each chapter plugs its playground + content in here.
@@ -68,7 +78,12 @@ const REGISTRY = {
   ch15: { Playground: Ch15Playground, content: CH15_CONTENT },
   ch16: { Playground: Ch16Playground, content: CH16_CONTENT },
   ch17: { Playground: Ch17Playground, content: CH17_CONTENT },
-  ch18: { Playground: Ch18Playground, content: CH18_CONTENT }
+  ch18: { Playground: Ch18Playground, content: CH18_CONTENT },
+  ch19: { Playground: Ch19Playground, content: CH19_CONTENT },
+  ch20: { Playground: Ch20Playground, content: CH20_CONTENT },
+  ch21: { Playground: Ch21Playground, content: CH21_CONTENT },
+  ch22: { Playground: Ch22Playground, content: CH22_CONTENT },
+  ch23: { Playground: Ch23Playground, content: CH23_CONTENT }
 };
 
 function SectionLabel({ children }) {
