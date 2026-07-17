@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { runPython } from "../lib/pyodide";
+import { reportCodeCellState } from "../lib/tutor";
 import WhatWhyHow from "./WhatWhyHow";
 import PredictBlock from "./Predict";
 
@@ -103,6 +104,7 @@ export default function CodeCell({ prompt, layers, defaultLayer, check, what, wh
         : null;
     setResult({ ...res, passed });
     setEverRan(true);
+    reportCodeCellState(currentCode(), res);
     if (passed) onPass?.();
     setRunning(false);
   }

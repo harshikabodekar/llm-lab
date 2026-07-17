@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import TutorPanel from "./TutorPanel";
 import Ch0Playground from "./playgrounds/Ch0Playground";
 import Ch1Playground from "./playgrounds/Ch1Playground";
 import Ch2Playground from "./playgrounds/Ch2Playground";
@@ -113,16 +114,30 @@ function ConceptSection({ concept, simple }) {
     <>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <SectionLabel>the idea</SectionLabel>
-        {simple && (
+        <div className="flex flex-wrap gap-2">
+          {simple && (
+            <button
+              onClick={() => setShowSimple((v) => !v)}
+              className={`px-3 py-1.5 font-mono text-xs ${
+                active ? "border-[1.5px] border-ink bg-marker" : "btn-paper"
+              }`}
+            >
+              explain with example 🌱
+            </button>
+          )}
           <button
-            onClick={() => setShowSimple((v) => !v)}
-            className={`px-3 py-1.5 font-mono text-xs ${
-              active ? "border-[1.5px] border-ink bg-marker" : "btn-paper"
-            }`}
+            onClick={() =>
+              window.dispatchEvent(
+                new CustomEvent("ask-tutor", {
+                  detail: { question: "Can you explain this chapter's idea a completely different way?" }
+                })
+              )
+            }
+            className="btn-paper px-3 py-1.5 font-mono text-xs"
           >
-            explain with example 🌱
+            explain this differently 🎓
           </button>
-        )}
+        </div>
       </div>
       <div
         className={`space-y-4 text-[1.02rem] leading-relaxed text-ink/90 ${
@@ -142,6 +157,7 @@ export default function ChapterShell({ chapter }) {
 
   return (
     <main className="mx-auto max-w-3xl px-5 py-12">
+      <TutorPanel chapter={chapter} content={entry?.content} />
       <Link href="/" className="font-mono text-sm text-inkblue hover:underline">
         ← back to the map
       </Link>
