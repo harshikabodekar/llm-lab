@@ -178,12 +178,12 @@ function KVCacheDemo() {
       <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="sheet-flat bg-white p-3">
           <p className="mb-1 font-mono text-xs text-alarm">without KV cache</p>
-          <p className="font-mono text-sm">≈ {withoutCache.toLocaleString()} compute units / new token</p>
+          <p className="font-mono text-sm">≈ {withoutCache.toLocaleString("en-US")} compute units / new token</p>
           <p className="mt-1 font-mono text-[0.65rem] text-faded">re-attends over every past token, every step</p>
         </div>
         <div className="sheet-flat bg-white p-3">
           <p className="mb-1 font-mono text-xs text-signal">with KV cache</p>
-          <p className="font-mono text-sm">≈ {withCache.toLocaleString()} compute units / new token</p>
+          <p className="font-mono text-sm">≈ {withCache.toLocaleString("en-US")} compute units / new token</p>
           <p className="mt-1 font-mono text-[0.65rem] text-faded">reuses cached keys/values, only computes the new token</p>
         </div>
       </div>

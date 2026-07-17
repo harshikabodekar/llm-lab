@@ -84,7 +84,7 @@ export default function Ch16Playground() {
       <StartHere>drag N up to 100,000, predict, then hit race and read the real timings.</StartHere>
 
       <label className="block font-mono text-xs text-faded">
-        N (number of stored vectors): <strong className="text-ink">{n.toLocaleString()}</strong>
+        N (number of stored vectors): <strong className="text-ink">{n.toLocaleString("en-US")}</strong>
       </label>
       <input
         type="range"
@@ -118,13 +118,13 @@ export default function Ch16Playground() {
           <div className="sheet-flat bg-white p-3">
             <p className="mb-1 font-mono text-xs text-alarm">brute force</p>
             <p className="font-mono text-lg font-bold">{result.brute.ms.toFixed(2)} ms</p>
-            <p className="mt-1 font-mono text-[0.65rem] text-faded">checked all {result.n.toLocaleString()} vectors</p>
+            <p className="mt-1 font-mono text-[0.65rem] text-faded">checked all {result.n.toLocaleString("en-US")} vectors</p>
           </div>
           <div className="sheet-flat bg-white p-3">
             <p className="mb-1 font-mono text-xs text-signal">bucketed index</p>
             <p className="font-mono text-lg font-bold">{result.bucketed.ms.toFixed(2)} ms</p>
             <p className="mt-1 font-mono text-[0.65rem] text-faded">
-              checked {CLUSTERS} centroids + {result.bucketed.bucketSize.toLocaleString()} vectors in the matching bucket
+              checked {CLUSTERS} centroids + {result.bucketed.bucketSize.toLocaleString("en-US")} vectors in the matching bucket
             </p>
           </div>
         </div>
@@ -132,7 +132,7 @@ export default function Ch16Playground() {
 
       {result && (
         <p className="margin-note mt-4">
-          bucketed index was ~{speedup}× faster at N={result.n.toLocaleString()}. try a small N (like 200) — the gap
+          bucketed index was ~{speedup}× faster at N={result.n.toLocaleString("en-US")}. try a small N (like 200) — the gap
           nearly vanishes, because indexing overhead only pays off at scale.
         </p>
       )}
