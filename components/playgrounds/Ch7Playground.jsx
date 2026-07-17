@@ -3,9 +3,16 @@
 import { useState } from "react";
 import CodeCell from "../CodeCell";
 import StartHere from "../StartHere";
+import PredictBlock from "../Predict";
 
 const CLASSES = ["cat", "dog", "car", "cup"];
 const TRUE_INDEX = 0;
+
+const PREDICT = {
+  question: "which gets punished HARDER: being confidently wrong, or just unsure (uniform)?",
+  options: ["confidently wrong", "unsure / uniform", "same either way"],
+  answerIndex: 0
+};
 
 function softmax(logits) {
   const m = Math.max(...logits);
@@ -22,6 +29,8 @@ const PRESETS = {
 
 function LossDemo() {
   const [logits, setLogits] = useState(PRESETS["clueless (uniform)"]);
+  const [predicted, setPredicted] = useState(null);
+  const [everRan, setEverRan] = useState(false);
   const probs = softmax(logits);
   const loss = -Math.log(Math.max(probs[TRUE_INDEX], 1e-9));
 
@@ -33,16 +42,25 @@ function LossDemo() {
     setLogits(next);
   }
 
+  function tryPreset(vals) {
+    if (predicted === null) return;
+    setLogits(vals);
+    setEverRan(true);
+  }
+
   return (
     <div className="sheet p-5">
       <p className="margin-note mb-4">correct answer: {CLASSES[TRUE_INDEX]}</p>
+
+      <PredictBlock predict={PREDICT} picked={predicted} onPick={setPredicted} revealed={everRan} />
 
       <div className="mb-5 flex flex-wrap gap-2">
         {Object.entries(PRESETS).map(([label, vals]) => (
           <button
             key={label}
-            onClick={() => setLogits(vals)}
-            className="btn-paper px-3 py-1.5 font-mono text-xs"
+            onClick={() => tryPreset(vals)}
+            disabled={predicted === null}
+            className="btn-paper px-3 py-1.5 font-mono text-xs disabled:opacity-50"
           >
             {label}
           </button>
@@ -101,6 +119,11 @@ export default function Ch7Playground() {
         why="this exact formula — negative log of the correct class's probability — is what every model minimizes during training."
         how="use math.log() to compute -log(probs[true_index]), press run."
         prompt="given probs (a list of probabilities) and true_index, compute the loss. stuck? there's a hint button."
+        predict={{
+          question: "with probs=[0.7, 0.1, 0.1, 0.1] and true_index=0, will the loss be small or large?",
+          options: ["small — 0.7 is a fairly confident correct guess", "large — any imperfection gets punished hard", "exactly zero"],
+          answerIndex: 0
+        }}
         layers={{
           hints: {
             starter:

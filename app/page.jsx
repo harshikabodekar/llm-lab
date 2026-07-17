@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PARTS, CHAPTERS } from "../lib/chapters";
+import RecapDeck from "../components/RecapDeck";
 
 export default function Home() {
   return (
@@ -23,6 +24,10 @@ export default function Home() {
         24 chapters · real code · real models · ₹0
       </p>
 
+      <div className="mt-10">
+        <RecapDeck />
+      </div>
+
       {/* journey map */}
       <div className="mt-14 space-y-12">
         {PARTS.map((part) => (
@@ -44,10 +49,10 @@ export default function Home() {
                   <div
                     className={`sheet-flat flex items-start gap-4 p-4 ${
                       live ? "sheet hover:-translate-y-0.5 transition-transform" : "opacity-55"
-                    }`}
+                    } ${c.isBoss && live ? "bg-marker/20" : ""}`}
                   >
                     <span className="mt-0.5 font-mono text-sm text-inkblue">
-                      {String(c.num).padStart(2, "0")}
+                      {c.isBoss ? "👾" : String(c.num).padStart(2, "0")}
                     </span>
                     <div className="min-w-0">
                       <h3 className="font-display text-lg font-semibold leading-snug">

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { runPython } from "../lib/pyodide";
 import WhatWhyHow from "./WhatWhyHow";
+import PredictBlock from "./Predict";
 
 /* the code cell — every python exercise in the app runs through this.
    4 difficulty layers, pick whichever you supply data for:
@@ -34,7 +35,9 @@ function shuffledOnce(arr) {
   return a;
 }
 
-export default function CodeCell({ prompt, layers, defaultLayer, check, what, why, how, onPass }) {
+export default function CodeCell({ prompt, layers, defaultLayer, check, what, why, how, onPass, predict }) {
+  const [predicted, setPredicted] = useState(null);
+  const [everRan, setEverRan] = useState(false);
   const available = useMemo(
     () => LAYER_ORDER.filter((k) => layers?.[k]),
     [layers]
@@ -88,6 +91,7 @@ export default function CodeCell({ prompt, layers, defaultLayer, check, what, wh
   }
 
   async function handleRun() {
+    if (predict && predicted === null) return;
     setRunning(true);
     setResult(null);
     const res = await runPython(currentCode());
@@ -98,6 +102,7 @@ export default function CodeCell({ prompt, layers, defaultLayer, check, what, wh
           : res.output.includes(check)
         : null;
     setResult({ ...res, passed });
+    setEverRan(true);
     if (passed) onPass?.();
     setRunning(false);
   }
@@ -132,6 +137,7 @@ export default function CodeCell({ prompt, layers, defaultLayer, check, what, wh
   return (
     <div className="sheet p-5">
       {(what || why || how) && <WhatWhyHow what={what} why={why} how={how} />}
+      <PredictBlock predict={predict} picked={predicted} onPick={setPredicted} revealed={everRan} />
       {prompt && <p className="margin-note mb-4">{prompt}</p>}
 
       {available.length > 1 && (
@@ -264,7 +270,7 @@ export default function CodeCell({ prompt, layers, defaultLayer, check, what, wh
       <div className="mt-4 flex items-center gap-2">
         <button
           onClick={handleRun}
-          disabled={running}
+          disabled={running || (predict && predicted === null)}
           className="btn-ink px-4 py-2 font-mono text-xs disabled:opacity-50"
         >
           {running ? "running…" : "▶ run"}

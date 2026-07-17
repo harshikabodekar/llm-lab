@@ -3,10 +3,17 @@
 import { useEffect, useRef, useState } from "react";
 import CodeCell from "../CodeCell";
 import StartHere from "../StartHere";
+import PredictBlock from "../Predict";
 import { buildVocab, buildNet, trainBatch, generateSample, MAX_TEXT_LEN, CONTEXT_LEN } from "../../lib/charmodel";
 
 const DEFAULT_TEXT =
   "claude is a language model. claude predicts the next token, one token at a time. claude learns patterns from text during training. training means predict, measure loss, backprop, nudge weights, repeat. the more claude trains, the better claude predicts. tokens become numbers, numbers become predictions, predictions become text.";
+
+const TRAIN_PREDICT = {
+  question: "as training continues, will the loss curve go up, down, or stay flat?",
+  options: ["down", "up", "stay flat"],
+  answerIndex: 0
+};
 
 const LR = 0.5;
 const BATCH_SIZE = 25;
@@ -51,6 +58,7 @@ function LiveTrainer() {
   const [sample, setSample] = useState("");
   const [temperature, setTemperature] = useState(0.7);
   const [status, setStatus] = useState(null);
+  const [predicted, setPredicted] = useState(null);
 
   const netRef = useRef(null);
   const vocabRef = useRef(null);
@@ -87,7 +95,7 @@ function LiveTrainer() {
   }
 
   function train() {
-    if (running || tooShort) return;
+    if (running || tooShort || predicted === null) return;
     if (!netRef.current) {
       const vocab = buildVocab(cappedText);
       vocabRef.current = vocab;
@@ -135,10 +143,14 @@ function LiveTrainer() {
       />
       {tooShort && <p className="mt-1 font-mono text-xs text-alarm">paste at least a short paragraph to train on.</p>}
 
+      <div className="mt-4">
+        <PredictBlock predict={TRAIN_PREDICT} picked={predicted} onPick={setPredicted} revealed={lossHistory.length > 0} />
+      </div>
+
       <div className="mt-4 flex flex-wrap items-center gap-2">
         <button
           onClick={running ? stop : train}
-          disabled={tooShort}
+          disabled={tooShort || (!running && predicted === null)}
           className="btn-ink px-4 py-2 font-mono text-xs disabled:opacity-50"
         >
           {running ? "■ stop" : "▶ train"}
@@ -205,6 +217,11 @@ export default function Ch9Playground() {
         why="this is literally how the trainer below turns each character of your text into numbers the network can multiply."
         how="build a list of zeros the size of the vocab, with a 1 at char_index, press run."
         prompt="given char_index and vocab_size, build the one-hot list. stuck? there's a hint button."
+        predict={{
+          question: "what will one_hot look like for vocab_size=5, char_index=2?",
+          options: ["[0, 0, 1, 0, 0]", "[1, 1, 0, 0, 0]", "[0, 0, 0, 0, 1]"],
+          answerIndex: 0
+        }}
         onPass={() => setUnlockedA(true)}
         layers={{
           hints: {
@@ -225,6 +242,11 @@ export default function Ch9Playground() {
         why="this is the exact loss the trainer below computes, every single step, thousands of times."
         how="use math.log() to compute -log(probs[true_index]), press run."
         prompt="given probs and true_index, compute the loss. same formula as ch7 — you'll need it constantly from here on."
+        predict={{
+          question: "probs=[0.05, 0.85, 0.1], true_index=1 — small loss or large loss?",
+          options: ["small — 0.85 is confident and correct", "large — the model wasn't 100% sure", "impossible to know"],
+          answerIndex: 0
+        }}
         onPass={() => setUnlockedB(true)}
         layers={{
           hints: {

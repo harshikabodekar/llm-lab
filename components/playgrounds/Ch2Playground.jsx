@@ -19,6 +19,11 @@ export default function Ch2Playground() {
           why="this is the laziest possible tokenizer — you need to feel its limits before building a real one."
           how="fill in the method name, press run."
           prompt="fill in the method that splits a string on spaces, then run."
+          predict={{
+            question: "once you fix the blank, what will tokens look like?",
+            options: ["['the', 'strawberry', 'model']", "'the strawberry model' (unchanged)", "an error"],
+            answerIndex: 0
+          }}
           layers={{
             blank: {
               template: 'text = "the strawberry model"\ntokens = text.___()\nprint(tokens)',
@@ -36,6 +41,11 @@ export default function Ch2Playground() {
           why="this exact logic — minus the training — is what turns your messages into tokens before any model sees them."
           how="finish tokenize(), press run — stuck? tap 'need a hint?' up to 3 times for the full answer."
           prompt="finish tokenize() — greedily match the longest chunk in VOCAB that the remaining text starts with. no match? peel off one character as its own token. stuck? there's a hint button."
+          predict={{
+            question: "once tokenize() works, what will tokenize(\"strawberry\") return?",
+            options: ["['straw', 'berry']", "10 single letters", "['strawberry'] unchanged"],
+            answerIndex: 0
+          }}
           layers={{
             hints: {
               starter:

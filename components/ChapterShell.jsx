@@ -12,6 +12,7 @@ import Ch6Playground from "./playgrounds/Ch6Playground";
 import Ch7Playground from "./playgrounds/Ch7Playground";
 import Ch8Playground from "./playgrounds/Ch8Playground";
 import Ch9Playground from "./playgrounds/Ch9Playground";
+import Boss1Playground from "./playgrounds/Boss1Playground";
 import Checkpoint from "./Checkpoint";
 import WhatWhyHow from "./WhatWhyHow";
 import { CH0_CONTENT } from "../lib/content/ch0";
@@ -24,6 +25,8 @@ import { CH6_CONTENT } from "../lib/content/ch6";
 import { CH7_CONTENT } from "../lib/content/ch7";
 import { CH8_CONTENT } from "../lib/content/ch8";
 import { CH9_CONTENT } from "../lib/content/ch9";
+import { BOSS1_CONTENT } from "../lib/content/boss1";
+import { addCollected } from "../lib/recapDeck";
 
 // registry: each chapter plugs its playground + content in here.
 // on days 2-5 we add one entry per chapter — the shell never changes.
@@ -37,7 +40,8 @@ const REGISTRY = {
   ch6: { Playground: Ch6Playground, content: CH6_CONTENT },
   ch7: { Playground: Ch7Playground, content: CH7_CONTENT },
   ch8: { Playground: Ch8Playground, content: CH8_CONTENT },
-  ch9: { Playground: Ch9Playground, content: CH9_CONTENT }
+  ch9: { Playground: Ch9Playground, content: CH9_CONTENT },
+  boss1: { Playground: Boss1Playground, content: BOSS1_CONTENT }
 };
 
 function SectionLabel({ children }) {
@@ -92,7 +96,7 @@ export default function ChapterShell({ chapter }) {
       </Link>
 
       <p className="margin-note mt-8">
-        chapter {String(chapter.num).padStart(2, "0")} · part {chapter.part}
+        {chapter.isBoss ? `part ${chapter.part} boss 👾` : `chapter ${String(chapter.num).padStart(2, "0")} · part ${chapter.part}`}
       </p>
       <h1 className="mt-2 font-display text-4xl font-bold leading-tight">
         {chapter.title}
@@ -131,7 +135,7 @@ export default function ChapterShell({ chapter }) {
           {/* 5 · checkpoint */}
           <section className="mt-12">
             <SectionLabel>checkpoint</SectionLabel>
-            <Checkpoint questions={entry.content.checkpoint} />
+            <Checkpoint questions={entry.content.checkpoint} onComplete={() => addCollected(chapter.id)} />
           </section>
         </>
       ) : (

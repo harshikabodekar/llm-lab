@@ -3,6 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import { Net, mseGrad } from "../../engine/tinynn";
 import StartHere from "../StartHere";
+import PredictBlock from "../Predict";
+
+const PREDICT = {
+  question: "will gradient descent beat your hand-tuned accuracy?",
+  options: ["yes, easily", "no, I'll beat it", "about the same"],
+  answerIndex: 0
+};
 
 /* real tanh neurons, real backprop (via engine/tinynn), no faking.
    the human and gradient descent both tune the SAME 9 numbers
@@ -132,6 +139,7 @@ export default function Ch4Playground() {
   const [b, setB] = useState(() => [...START_WEIGHTS.b]);
   const [gdResult, setGdResult] = useState(null);
   const [running, setRunning] = useState(false);
+  const [predicted, setPredicted] = useState(null);
 
   const layer1 = { w, b };
 
@@ -153,6 +161,7 @@ export default function Ch4Playground() {
   }
 
   async function handleRunGD() {
+    if (predicted === null) return;
     setRunning(true);
     await new Promise((r) => setTimeout(r, 30));
     setGdResult(runGradientDescent());
@@ -205,10 +214,14 @@ export default function Ch4Playground() {
         ))}
       </div>
 
+      <div className="mt-4">
+        <PredictBlock predict={PREDICT} picked={predicted} onPick={setPredicted} revealed={!!gdResult} />
+      </div>
+
       <div className="mt-4 flex flex-wrap items-center gap-2">
         <button
           onClick={handleRunGD}
-          disabled={running}
+          disabled={running || predicted === null}
           className="btn-ink px-4 py-2 font-mono text-xs disabled:opacity-50"
         >
           {running ? "training…" : "▶ run gradient descent"}

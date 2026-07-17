@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import StartHere from "../StartHere";
+import PredictBlock from "../Predict";
 
 /* real gradient descent, animated one step at a time.
    f(x) = x^2 + 0.4*sin(2x) — a hilly curve with one main valley, steep
@@ -58,6 +59,7 @@ export default function Ch8Playground() {
   const [history, setHistory] = useState([START_X]);
   const [running, setRunning] = useState(false);
   const [status, setStatus] = useState(null); // { kind: "converged" | "diverged" | "stopped", steps }
+  const [predicted, setPredicted] = useState(null);
   const intervalRef = useRef(null);
   const stepCountRef = useRef(0);
   const stableCountRef = useRef(0);
@@ -80,7 +82,7 @@ export default function Ch8Playground() {
   }
 
   function run() {
-    if (running) return;
+    if (running || predicted === null) return;
     setStatus(null);
     setRunning(true);
     intervalRef.current = setInterval(() => {
@@ -156,8 +158,25 @@ export default function Ch8Playground() {
         />
       </div>
 
+      <div className="mt-4">
+        <PredictBlock
+          predict={{
+            question: "with THIS learning rate, will the ball converge, creep too slowly, or fly off the landscape?",
+            options: ["converge smoothly", "creep — barely move", "fly off the landscape"],
+            answerIndex: () => (status?.kind === "diverged" ? 2 : status?.kind === "converged" ? 0 : 1)
+          }}
+          picked={predicted}
+          onPick={setPredicted}
+          revealed={!!status}
+        />
+      </div>
+
       <div className="mt-4 flex flex-wrap items-center gap-2">
-        <button onClick={run} disabled={running} className="btn-ink px-4 py-2 font-mono text-xs disabled:opacity-50">
+        <button
+          onClick={run}
+          disabled={running || predicted === null}
+          className="btn-ink px-4 py-2 font-mono text-xs disabled:opacity-50"
+        >
           {running ? "running…" : "▶ run"}
         </button>
         <button onClick={reset} className="btn-paper px-4 py-2 font-mono text-xs">

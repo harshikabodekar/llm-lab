@@ -2,6 +2,13 @@
 
 import { useRef, useState } from "react";
 import StartHere from "../StartHere";
+import PredictBlock from "../Predict";
+
+const PREDICT = {
+  question: "which word do you think will be closest to king − man + woman?",
+  options: ["queen", "apple", "dog"],
+  answerIndex: 0
+};
 
 function computeDemo(points) {
   const k = points.king, m = points.man, w = points.woman;
@@ -53,6 +60,8 @@ function clonePoints() {
 export default function Ch3Playground() {
   const [points, setPoints] = useState(clonePoints);
   const [demo, setDemo] = useState(null);
+  const [predicted, setPredicted] = useState(null);
+  const [everRan, setEverRan] = useState(false);
   const containerRef = useRef(null);
   const draggingRef = useRef(null);
 
@@ -80,7 +89,9 @@ export default function Ch3Playground() {
   }
 
   function runDemo() {
+    if (predicted === null) return;
     setDemo(computeDemo(points));
+    setEverRan(true);
   }
 
   function resetLayout() {
@@ -95,6 +106,8 @@ export default function Ch3Playground() {
       <label className="font-mono text-xs text-faded">
         drag any point — notice how the clusters mean something. king is near queen, not near banana.
       </label>
+
+      <PredictBlock predict={PREDICT} picked={predicted} onPick={setPredicted} revealed={everRan} />
 
       <div
         ref={containerRef}
@@ -138,7 +151,11 @@ export default function Ch3Playground() {
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
-        <button onClick={runDemo} className="btn-ink px-4 py-2 font-mono text-xs">
+        <button
+          onClick={runDemo}
+          disabled={predicted === null}
+          className="btn-ink px-4 py-2 font-mono text-xs disabled:opacity-50"
+        >
           ▶ king − man + woman = ?
         </button>
         <button onClick={resetLayout} className="btn-paper px-4 py-2 font-mono text-xs">
