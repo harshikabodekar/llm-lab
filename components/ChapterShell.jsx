@@ -12,6 +12,8 @@ import Ch6Playground from "./playgrounds/Ch6Playground";
 import Ch7Playground from "./playgrounds/Ch7Playground";
 import Ch8Playground from "./playgrounds/Ch8Playground";
 import Ch9Playground from "./playgrounds/Ch9Playground";
+import Ch10Playground from "./playgrounds/Ch10Playground";
+import Ch11Playground from "./playgrounds/Ch11Playground";
 import Boss1Playground from "./playgrounds/Boss1Playground";
 import Ch12Playground from "./playgrounds/Ch12Playground";
 import Ch13Playground from "./playgrounds/Ch13Playground";
@@ -32,6 +34,8 @@ import { CH6_CONTENT } from "../lib/content/ch6";
 import { CH7_CONTENT } from "../lib/content/ch7";
 import { CH8_CONTENT } from "../lib/content/ch8";
 import { CH9_CONTENT } from "../lib/content/ch9";
+import { CH10_CONTENT } from "../lib/content/ch10";
+import { CH11_CONTENT } from "../lib/content/ch11";
 import { BOSS1_CONTENT } from "../lib/content/boss1";
 import { CH12_CONTENT } from "../lib/content/ch12";
 import { CH13_CONTENT } from "../lib/content/ch13";
@@ -55,6 +59,8 @@ const REGISTRY = {
   ch7: { Playground: Ch7Playground, content: CH7_CONTENT },
   ch8: { Playground: Ch8Playground, content: CH8_CONTENT },
   ch9: { Playground: Ch9Playground, content: CH9_CONTENT },
+  ch10: { Playground: Ch10Playground, content: CH10_CONTENT },
+  ch11: { Playground: Ch11Playground, content: CH11_CONTENT },
   boss1: { Playground: Boss1Playground, content: BOSS1_CONTENT },
   ch12: { Playground: Ch12Playground, content: CH12_CONTENT },
   ch13: { Playground: Ch13Playground, content: CH13_CONTENT },
