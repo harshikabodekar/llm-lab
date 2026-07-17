@@ -27,6 +27,9 @@ import Ch20Playground from "./playgrounds/Ch20Playground";
 import Ch21Playground from "./playgrounds/Ch21Playground";
 import Ch22Playground from "./playgrounds/Ch22Playground";
 import Ch23Playground from "./playgrounds/Ch23Playground";
+import Boss2Playground from "./playgrounds/Boss2Playground";
+import Boss3Playground from "./playgrounds/Boss3Playground";
+import Boss4Playground from "./playgrounds/Boss4Playground";
 import Checkpoint from "./Checkpoint";
 import WhatWhyHow from "./WhatWhyHow";
 import { CH0_CONTENT } from "../lib/content/ch0";
@@ -54,6 +57,9 @@ import { CH20_CONTENT } from "../lib/content/ch20";
 import { CH21_CONTENT } from "../lib/content/ch21";
 import { CH22_CONTENT } from "../lib/content/ch22";
 import { CH23_CONTENT } from "../lib/content/ch23";
+import { BOSS2_CONTENT } from "../lib/content/boss2";
+import { BOSS3_CONTENT } from "../lib/content/boss3";
+import { BOSS4_CONTENT } from "../lib/content/boss4";
 import { addCollected } from "../lib/recapDeck";
 
 // registry: each chapter plugs its playground + content in here.
@@ -83,7 +89,10 @@ const REGISTRY = {
   ch20: { Playground: Ch20Playground, content: CH20_CONTENT },
   ch21: { Playground: Ch21Playground, content: CH21_CONTENT },
   ch22: { Playground: Ch22Playground, content: CH22_CONTENT },
-  ch23: { Playground: Ch23Playground, content: CH23_CONTENT }
+  ch23: { Playground: Ch23Playground, content: CH23_CONTENT },
+  boss2: { Playground: Boss2Playground, content: BOSS2_CONTENT },
+  boss3: { Playground: Boss3Playground, content: BOSS3_CONTENT },
+  boss4: { Playground: Boss4Playground, content: BOSS4_CONTENT }
 };
 
 function SectionLabel({ children }) {
