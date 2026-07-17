@@ -69,7 +69,7 @@ And an honest list of what this can't teach you — because a course that promis
 
 🗺️ Status
 
-Actively being built in a 5-day sprint. Foundations + training chapters live; RAG, agents and polish landing daily. Watch the repo 👀
+Actively being built in a 5-day sprint. Foundations, training, and using-models chapters (sampling, prompting, RAG, agents, LoRA) live; reality-check chapters and final polish landing daily. Watch the repo 👀
 
 
 Built by Harshika Bodekar — frontend developer turned AI engineer, building the resource she wished existed.
