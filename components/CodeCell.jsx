@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { runPython } from "../lib/pyodide";
+import { runPython, isPyodideReady } from "../lib/pyodide";
 import { reportCodeCellState } from "../lib/tutor";
 import WhatWhyHow from "./WhatWhyHow";
 import PredictBlock from "./Predict";
@@ -198,9 +198,11 @@ export default function CodeCell({ prompt, layers, defaultLayer, check, what, wh
               }}
               className="sheet-flat flex cursor-grab items-center gap-2 bg-white px-3 py-2 font-mono text-sm active:cursor-grabbing"
             >
-              <span className="select-none text-faded">⠿</span>
-              <span className="flex-1 whitespace-pre">{line}</span>
-              <div className="flex flex-col gap-0.5">
+              <span className="shrink-0 select-none text-faded">⠿</span>
+              <div className="min-w-0 flex-1 overflow-x-auto">
+                <span className="whitespace-pre">{line}</span>
+              </div>
+              <div className="flex shrink-0 flex-col gap-0.5">
                 <button
                   aria-label="move line up"
                   onClick={() => moveLine(i, -1)}
@@ -275,7 +277,7 @@ export default function CodeCell({ prompt, layers, defaultLayer, check, what, wh
           disabled={running || (predict && predicted === null)}
           className="btn-ink px-4 py-2 font-mono text-xs disabled:opacity-50"
         >
-          {running ? "running…" : "▶ run"}
+          {running ? (isPyodideReady() ? "running…" : "loading python (~5s, first time only)…") : "▶ run"}
         </button>
         <button onClick={handleReset} className="btn-paper px-4 py-2 font-mono text-xs">
           reset

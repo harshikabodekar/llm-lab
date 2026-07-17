@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PARTS, CHAPTERS } from "../lib/chapters";
 import RecapDeck from "../components/RecapDeck";
+import PartProgress from "../components/PartProgress";
 
 export default function Home() {
   return (
@@ -32,7 +33,7 @@ export default function Home() {
       <div className="mt-14 space-y-12">
         {PARTS.map((part) => (
           <section key={part.id}>
-            <div className="mb-4 flex items-baseline gap-3">
+            <div className="mb-4 flex flex-wrap items-baseline gap-3">
               <span className="font-mono text-sm text-inkblue">
                 part {part.id}/4
               </span>
@@ -40,6 +41,10 @@ export default function Home() {
                 {part.title}
               </h2>
               <span className="text-sm text-faded">— {part.subtitle}</span>
+              <PartProgress
+                partId={part.id}
+                total={CHAPTERS.filter((c) => c.part === part.id && c.status === "live").length}
+              />
             </div>
 
             <ol className="space-y-3">

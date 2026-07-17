@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import TutorPanel from "./TutorPanel";
+import { CHAPTERS } from "../lib/chapters";
 import Ch0Playground from "./playgrounds/Ch0Playground";
 import Ch1Playground from "./playgrounds/Ch1Playground";
 import Ch2Playground from "./playgrounds/Ch2Playground";
@@ -152,8 +153,17 @@ function ConceptSection({ concept, simple }) {
   );
 }
 
+function nextLiveChapter(chapter) {
+  const i = CHAPTERS.findIndex((c) => c.id === chapter.id);
+  for (let j = i + 1; j < CHAPTERS.length; j++) {
+    if (CHAPTERS[j].status === "live") return CHAPTERS[j];
+  }
+  return null;
+}
+
 export default function ChapterShell({ chapter }) {
   const entry = REGISTRY[chapter.id];
+  const next = nextLiveChapter(chapter);
 
   return (
     <main className="mx-auto max-w-3xl px-5 py-12">
@@ -222,6 +232,21 @@ export default function ChapterShell({ chapter }) {
         <div className="sheet bg-marker/30 p-5">
           <p className="font-mono text-sm leading-relaxed">{chapter.recap}</p>
         </div>
+      </section>
+
+      {/* 7 · next chapter */}
+      <section className="mt-12 text-center">
+        {next ? (
+          <Link href={`/chapter/${next.id}`} className="btn-ink inline-block px-6 py-3 font-mono text-sm">
+            {next.isBoss ? `next: ${next.title} 👾` : `next chapter → ${next.title}`}
+          </Link>
+        ) : (
+          <div className="sheet bg-marker/30 p-5">
+            <p className="font-mono text-sm">
+              🎉 that's every chapter live so far — you've reached the end of what's built. more landing soon.
+            </p>
+          </div>
+        )}
       </section>
     </main>
   );
