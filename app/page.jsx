@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { PARTS, CHAPTERS } from "../lib/chapters";
 import RecapDeck from "../components/RecapDeck";
+import ClickBook from "../components/ClickBook";
 import PartProgress from "../components/PartProgress";
+import RecallCard from "../components/RecallCard";
 
 export default function Home() {
   return (
@@ -26,7 +28,9 @@ export default function Home() {
       </p>
 
       <div className="mt-10">
+        <RecallCard />
         <RecapDeck />
+        <ClickBook />
       </div>
 
       {/* journey map */}

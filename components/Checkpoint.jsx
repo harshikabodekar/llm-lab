@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export default function Checkpoint({ questions, onComplete }) {
+export default function Checkpoint({ questions, onComplete, onWrong }) {
   const [answeredCount, setAnsweredCount] = useState(0);
 
   useEffect(() => {
@@ -13,18 +13,19 @@ export default function Checkpoint({ questions, onComplete }) {
   return (
     <div className="space-y-5">
       {questions.map((q, i) => (
-        <Question key={i} q={q} n={i + 1} onFirstAnswer={() => setAnsweredCount((c) => c + 1)} />
+        <Question key={i} q={q} n={i + 1} onFirstAnswer={() => setAnsweredCount((c) => c + 1)} onWrong={onWrong} />
       ))}
     </div>
   );
 }
 
-function Question({ q, n, onFirstAnswer }) {
+function Question({ q, n, onFirstAnswer, onWrong }) {
   const [picked, setPicked] = useState(null);
   const answered = picked !== null;
 
   function pick(i) {
     if (picked === null) onFirstAnswer();
+    if (i !== q.answer) onWrong?.();
     setPicked(i);
   }
 

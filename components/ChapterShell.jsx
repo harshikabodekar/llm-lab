@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import TutorPanel from "./TutorPanel";
 import { CHAPTERS } from "../lib/chapters";
@@ -34,67 +34,45 @@ import Boss3Playground from "./playgrounds/Boss3Playground";
 import Boss4Playground from "./playgrounds/Boss4Playground";
 import Checkpoint from "./Checkpoint";
 import WhatWhyHow from "./WhatWhyHow";
-import { CH0_CONTENT } from "../lib/content/ch0";
-import { CH1_CONTENT } from "../lib/content/ch1";
-import { CH2_CONTENT } from "../lib/content/ch2";
-import { CH3_CONTENT } from "../lib/content/ch3";
-import { CH4_CONTENT } from "../lib/content/ch4";
-import { CH5_CONTENT } from "../lib/content/ch5";
-import { CH6_CONTENT } from "../lib/content/ch6";
-import { CH7_CONTENT } from "../lib/content/ch7";
-import { CH8_CONTENT } from "../lib/content/ch8";
-import { CH9_CONTENT } from "../lib/content/ch9";
-import { CH10_CONTENT } from "../lib/content/ch10";
-import { CH11_CONTENT } from "../lib/content/ch11";
-import { BOSS1_CONTENT } from "../lib/content/boss1";
-import { CH12_CONTENT } from "../lib/content/ch12";
-import { CH13_CONTENT } from "../lib/content/ch13";
-import { CH14_CONTENT } from "../lib/content/ch14";
-import { CH15_CONTENT } from "../lib/content/ch15";
-import { CH16_CONTENT } from "../lib/content/ch16";
-import { CH17_CONTENT } from "../lib/content/ch17";
-import { CH18_CONTENT } from "../lib/content/ch18";
-import { CH19_CONTENT } from "../lib/content/ch19";
-import { CH20_CONTENT } from "../lib/content/ch20";
-import { CH21_CONTENT } from "../lib/content/ch21";
-import { CH22_CONTENT } from "../lib/content/ch22";
-import { CH23_CONTENT } from "../lib/content/ch23";
-import { BOSS2_CONTENT } from "../lib/content/boss2";
-import { BOSS3_CONTENT } from "../lib/content/boss3";
-import { BOSS4_CONTENT } from "../lib/content/boss4";
+import Pip from "./Pip";
+import ClickButton from "./ClickButton";
+import { CONTENT } from "../lib/contentRegistry";
 import { addCollected } from "../lib/recapDeck";
+import { hasZeroClicks, wasNudged, markNudged } from "../lib/clickbook";
+import { firePipStuck, firePipCelebrate } from "../lib/pipCooldown";
 
-// registry: each chapter plugs its playground + content in here.
-// on days 2-5 we add one entry per chapter — the shell never changes.
-const REGISTRY = {
-  ch0: { Playground: Ch0Playground, content: CH0_CONTENT },
-  ch1: { Playground: Ch1Playground, content: CH1_CONTENT },
-  ch2: { Playground: Ch2Playground, content: CH2_CONTENT },
-  ch3: { Playground: Ch3Playground, content: CH3_CONTENT },
-  ch4: { Playground: Ch4Playground, content: CH4_CONTENT },
-  ch5: { Playground: Ch5Playground, content: CH5_CONTENT },
-  ch6: { Playground: Ch6Playground, content: CH6_CONTENT },
-  ch7: { Playground: Ch7Playground, content: CH7_CONTENT },
-  ch8: { Playground: Ch8Playground, content: CH8_CONTENT },
-  ch9: { Playground: Ch9Playground, content: CH9_CONTENT },
-  ch10: { Playground: Ch10Playground, content: CH10_CONTENT },
-  ch11: { Playground: Ch11Playground, content: CH11_CONTENT },
-  boss1: { Playground: Boss1Playground, content: BOSS1_CONTENT },
-  ch12: { Playground: Ch12Playground, content: CH12_CONTENT },
-  ch13: { Playground: Ch13Playground, content: CH13_CONTENT },
-  ch14: { Playground: Ch14Playground, content: CH14_CONTENT },
-  ch15: { Playground: Ch15Playground, content: CH15_CONTENT },
-  ch16: { Playground: Ch16Playground, content: CH16_CONTENT },
-  ch17: { Playground: Ch17Playground, content: CH17_CONTENT },
-  ch18: { Playground: Ch18Playground, content: CH18_CONTENT },
-  ch19: { Playground: Ch19Playground, content: CH19_CONTENT },
-  ch20: { Playground: Ch20Playground, content: CH20_CONTENT },
-  ch21: { Playground: Ch21Playground, content: CH21_CONTENT },
-  ch22: { Playground: Ch22Playground, content: CH22_CONTENT },
-  ch23: { Playground: Ch23Playground, content: CH23_CONTENT },
-  boss2: { Playground: Boss2Playground, content: BOSS2_CONTENT },
-  boss3: { Playground: Boss3Playground, content: BOSS3_CONTENT },
-  boss4: { Playground: Boss4Playground, content: BOSS4_CONTENT }
+// registry: each chapter plugs its playground in here, content comes from
+// lib/contentRegistry.js. on days 2-5 we add one entry per chapter — the
+// shell never changes.
+const PLAYGROUNDS = {
+  ch0: Ch0Playground,
+  ch1: Ch1Playground,
+  ch2: Ch2Playground,
+  ch3: Ch3Playground,
+  ch4: Ch4Playground,
+  ch5: Ch5Playground,
+  ch6: Ch6Playground,
+  ch7: Ch7Playground,
+  ch8: Ch8Playground,
+  ch9: Ch9Playground,
+  ch10: Ch10Playground,
+  ch11: Ch11Playground,
+  boss1: Boss1Playground,
+  ch12: Ch12Playground,
+  ch13: Ch13Playground,
+  ch14: Ch14Playground,
+  ch15: Ch15Playground,
+  ch16: Ch16Playground,
+  ch17: Ch17Playground,
+  ch18: Ch18Playground,
+  ch19: Ch19Playground,
+  ch20: Ch20Playground,
+  ch21: Ch21Playground,
+  ch22: Ch22Playground,
+  ch23: Ch23Playground,
+  boss2: Boss2Playground,
+  boss3: Boss3Playground,
+  boss4: Boss4Playground
 };
 
 function SectionLabel({ children }) {
@@ -106,13 +84,49 @@ function SectionLabel({ children }) {
 // the idea section, with an optional "explain with example" toggle.
 // every chapter gets this for free by just adding a `simple` array
 // (same shape as `concept`) to its content file — nothing else to wire up.
+//
+// also watches its own dwell time: if this section stays the dominant
+// thing on screen for 45s with no interaction, pip offers a different
+// explanation. one shot per mount (i.e. per chapter visit).
 function ConceptSection({ concept, simple }) {
   const [showSimple, setShowSimple] = useState(false);
+  const sectionRef = useRef(null);
+  const idleFiredRef = useRef(false);
   const active = showSimple && simple;
   const paragraphs = active ? simple : concept;
 
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    let timer = null;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (idleFiredRef.current) return;
+        if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+          timer = setTimeout(() => {
+            idleFiredRef.current = true;
+            firePipStuck({
+              message: "this one's dense. want it explained differently?",
+              question: "Can you explain this chapter's idea a different way? I've been stuck reading it for a while."
+            });
+          }, 45_000);
+        } else if (timer) {
+          clearTimeout(timer);
+          timer = null;
+        }
+      },
+      { threshold: [0, 0.5, 1] }
+    );
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      if (timer) clearTimeout(timer);
+    };
+  }, []);
+
   return (
-    <>
+    <div ref={sectionRef}>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <SectionLabel>the idea</SectionLabel>
         <div className="flex flex-wrap gap-2">
@@ -138,6 +152,7 @@ function ConceptSection({ concept, simple }) {
           >
             explain this differently 🎓
           </button>
+          <ClickButton section="the idea" />
         </div>
       </div>
       <div
@@ -149,7 +164,7 @@ function ConceptSection({ concept, simple }) {
           <p key={i}>{p}</p>
         ))}
       </div>
-    </>
+    </div>
   );
 }
 
@@ -162,12 +177,38 @@ function nextLiveChapter(chapter) {
 }
 
 export default function ChapterShell({ chapter }) {
-  const entry = REGISTRY[chapter.id];
+  const Playground = PLAYGROUNDS[chapter.id];
+  const content = CONTENT[chapter.id];
+  const entry = Playground && content ? { Playground, content } : null;
   const next = nextLiveChapter(chapter);
+  const checkpointWrongCount = useRef(0);
+
+  function handleCheckpointWrong() {
+    checkpointWrongCount.current += 1;
+    if (checkpointWrongCount.current === 2) {
+      firePipStuck({
+        message: "want me to re-explain the idea behind this one?",
+        question: `Can you re-explain the core idea behind "${chapter.title}"? I got the checkpoint question wrong twice.`
+      });
+    }
+  }
+
+  function handleCheckpointComplete() {
+    addCollected(chapter.id);
+    if (chapter.isBoss) firePipCelebrate();
+    if (hasZeroClicks(chapter.id) && !wasNudged(chapter.id)) {
+      markNudged(chapter.id);
+      firePipStuck({
+        message: "nothing clicked? tell me what's foggy",
+        question: `Nothing in "${chapter.title}" clicked for me yet — can you help me figure out what's confusing?`
+      });
+    }
+  }
 
   return (
     <main className="mx-auto max-w-3xl px-5 py-12">
       <TutorPanel chapter={chapter} content={entry?.content} />
+      <Pip />
       <Link href="/" className="font-mono text-sm text-inkblue hover:underline">
         ← back to the map
       </Link>
@@ -212,7 +253,11 @@ export default function ChapterShell({ chapter }) {
           {/* 5 · checkpoint */}
           <section className="mt-12">
             <SectionLabel>checkpoint</SectionLabel>
-            <Checkpoint questions={entry.content.checkpoint} onComplete={() => addCollected(chapter.id)} />
+            <Checkpoint
+              questions={entry.content.checkpoint}
+              onComplete={handleCheckpointComplete}
+              onWrong={handleCheckpointWrong}
+            />
           </section>
         </>
       ) : (

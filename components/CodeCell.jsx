@@ -3,8 +3,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { runPython, isPyodideReady } from "../lib/pyodide";
 import { reportCodeCellState } from "../lib/tutor";
+import { firePipStuck, firePipCelebrate } from "../lib/pipCooldown";
 import WhatWhyHow from "./WhatWhyHow";
 import PredictBlock from "./Predict";
+import ClickButton from "./ClickButton";
 
 /* the code cell — every python exercise in the app runs through this.
    4 difficulty layers, pick whichever you supply data for:
@@ -78,6 +80,7 @@ export default function CodeCell({ prompt, layers, defaultLayer, check, what, wh
 
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState(null); // { ok, output, passed }
+  const errorStreak = useRef(0);
 
   function currentCode() {
     if (layer === "blank") {
@@ -105,7 +108,23 @@ export default function CodeCell({ prompt, layers, defaultLayer, check, what, wh
     setResult({ ...res, passed });
     setEverRan(true);
     reportCodeCellState(currentCode(), res);
-    if (passed) onPass?.();
+
+    if (res.ok) {
+      errorStreak.current = 0;
+    } else {
+      errorStreak.current += 1;
+      if (errorStreak.current === 2) {
+        firePipStuck({
+          message: "that error's being annoying huh — want me to look?",
+          question: `I keep getting this error and I'm not sure why:\n\n${res.output}\n\nHere's my code:\n${currentCode()}`
+        });
+      }
+    }
+
+    if (passed) {
+      onPass?.();
+      firePipCelebrate();
+    }
     setRunning(false);
   }
 
@@ -282,6 +301,7 @@ export default function CodeCell({ prompt, layers, defaultLayer, check, what, wh
         <button onClick={handleReset} className="btn-paper px-4 py-2 font-mono text-xs">
           reset
         </button>
+        <ClickButton section={prompt || "code cell"} />
       </div>
 
       {result && (

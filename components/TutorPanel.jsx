@@ -43,14 +43,6 @@ export default function TutorPanel({ chapter, content }) {
 
   return (
     <>
-      <button
-        onClick={() => setOpen(true)}
-        aria-label="ask the lab assistant"
-        className="fixed bottom-4 right-4 z-40 border-[1.5px] border-ink bg-marker px-3 py-2 font-mono text-sm shadow-[3px_3px_0_0_rgba(26,29,33,0.25)] hover:-translate-y-0.5 transition-transform"
-      >
-        🎓
-      </button>
-
       {open && (
         <div className="fixed inset-0 z-50 flex items-end justify-end bg-ink/20 p-4" onClick={() => setOpen(false)}>
           <div
