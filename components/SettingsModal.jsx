@@ -1,15 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getApiKey, setApiKey } from "../lib/gemini";
+import { getApiKey, setApiKey, testApiKey } from "../lib/gemini";
 
 export default function SettingsModal() {
   const [open, setOpen] = useState(false);
   const [key, setKey] = useState("");
   const [saved, setSaved] = useState(false);
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState(null); // { ok, message }
 
   useEffect(() => {
     setKey(getApiKey());
+    setTestResult(null);
   }, [open]);
 
   useEffect(() => {
@@ -21,12 +24,24 @@ export default function SettingsModal() {
   function save() {
     setApiKey(key.trim());
     setSaved(true);
+    setTestResult(null);
     setTimeout(() => setSaved(false), 1500);
   }
 
   function clear() {
     setApiKey("");
     setKey("");
+    setTestResult(null);
+  }
+
+  async function runTest() {
+    // test whatever's currently saved, so "test" always reflects "save"
+    setApiKey(key.trim());
+    setTesting(true);
+    setTestResult(null);
+    const res = await testApiKey();
+    setTestResult(res);
+    setTesting(false);
   }
 
   return (
@@ -66,11 +81,30 @@ export default function SettingsModal() {
               <button onClick={save} className="btn-ink px-3 py-1.5 font-mono text-xs">
                 save
               </button>
+              <button
+                onClick={runTest}
+                disabled={testing || !key.trim()}
+                className="btn-paper px-3 py-1.5 font-mono text-xs disabled:opacity-50"
+              >
+                {testing ? "testing…" : "test key"}
+              </button>
               <button onClick={clear} className="btn-paper px-3 py-1.5 font-mono text-xs">
                 clear
               </button>
               {saved && <span className="font-mono text-xs text-signal">✓ saved</span>}
             </div>
+
+            {testResult && (
+              <p
+                className={`mt-3 whitespace-pre-wrap border-[1.5px] p-2.5 font-mono text-xs leading-relaxed ${
+                  testResult.ok ? "border-signal bg-signal/10 text-signal" : "border-alarm bg-alarm/10 text-alarm"
+                }`}
+              >
+                {testResult.ok
+                  ? `✓ it works — model replied: "${testResult.text.trim()}"`
+                  : `✗ ${testResult.kind}${testResult.status ? ` (${testResult.status})` : ""} — ${testResult.message}`}
+              </p>
+            )}
 
             <p className="margin-note mt-4">
               free key in 30 seconds: open{" "}
