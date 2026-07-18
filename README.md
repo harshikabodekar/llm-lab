@@ -7,12 +7,14 @@
 **An interactive lab that teaches how LLMs actually work by making you build every piece yourself.**
 Real Python in your browser. A tiny GPT you train live. A RAG pipeline you write line by line.
 
-[![Live](https://img.shields.io/badge/▶_live_demo-visit-1A1D21?style=for-the-badge)](https://llm-lab.vercel.app)
+[![Live](https://img.shields.io/badge/▶_live_demo-visit-1A1D21?style=for-the-badge)](https://buildyourownai.vercel.app)
 [![Next.js](https://img.shields.io/badge/Next.js_14-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
 [![Python](https://img.shields.io/badge/Python_in_browser-Pyodide-2B4FD8?style=for-the-badge&logo=python&logoColor=white)](https://pyodide.org)
 [![Free](https://img.shields.io/badge/cost-₹0-12A150?style=for-the-badge)](#)
 
 **24 chapters · 4 boss levels · 0 videos · 0 rupees**
+
+**→ [buildyourownai.vercel.app](https://buildyourownai.vercel.app)**
 
 </div>
 
