@@ -93,6 +93,24 @@ export default function Home() {
         ))}
       </div>
 
+      {/* the build path — a separate destination, not part of the syllabus */}
+      <div className="mt-16 border-t-[3px] border-dashed border-ink/25 pt-10">
+        <p className="margin-note mb-4">finished the chapters? now build your own thing</p>
+        <Link
+          href="/build-path"
+          className="sheet flex flex-wrap items-center justify-between gap-4 bg-inkblue/5 p-5 hover:-translate-y-0.5 transition-transform"
+        >
+          <div className="min-w-0">
+            <h3 className="font-display text-2xl font-semibold">The Build Path 🛠️</h3>
+            <p className="mt-1 text-sm leading-relaxed text-ink/70">
+              a practical, step-by-step checklist for turning what you learned into something real — picked, built,
+              evaluated, deployed, and on your portfolio.
+            </p>
+          </div>
+          <span className="shrink-0 bg-marker px-3 py-1.5 font-mono text-xs font-semibold">start building →</span>
+        </Link>
+      </div>
+
       <footer className="mt-16 border-t-2 border-ink/10 pt-6">
         <p className="font-mono text-xs text-faded">
           built by harshii · powered by pyodide, transformers.js & stubbornness
